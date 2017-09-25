@@ -1,2 +1,2 @@
 # explore_traders
-No license to read, write or share at present
+No license to use, modify or share at present
