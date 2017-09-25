@@ -1,0 +1,32 @@
+CREATE CONSTRAINT ON (c:Comcode) ASSERT c.comcode IS UNIQUE;
+CREATE CONSTRAINT ON (n:Company) ASSERT n.name IS UNIQUE;
+// Load commodities
+USING PERIODIC COMMIT 10000
+LOAD CSV WITH HEADERS FROM "file:///Export_combined_summary_test.csv" AS row FIELDTERMINATOR '\t'
+MERGE (n:Comcode {comcode: row.HScode});
+// Load companies
+USING PERIODIC COMMIT 10000
+LOAD CSV WITH HEADERS FROM "file:///Export_combined_summary_test.csv" AS row FIELDTERMINATOR '\t'
+MERGE (n:Company {name: row.Name});
+// Load relationships
+USING PERIODIC COMMIT 10000
+LOAD CSV WITH HEADERS FROM "file:///Export_combined_summary_test.csv" AS row FIELDTERMINATOR '\t'
+MATCH (c:Company {name: row.Name})
+MATCH (n:Comcode {comcode: row.HScode})
+MERGE (c)-[r:EXPORTED]->(n)
+ON CREATE SET r.monthcount = row.MonthCount;
+// Load commodities
+USING PERIODIC COMMIT 10000
+LOAD CSV WITH HEADERS FROM "file:///Import_combined_summary_test.csv" AS row FIELDTERMINATOR '\t'
+MERGE (n:Comcode {comcode: row.HScode});
+// Load commodities
+USING PERIODIC COMMIT 10000
+LOAD CSV WITH HEADERS FROM "file:///Import_combined_summary_test.csv" AS row FIELDTERMINATOR '\t'
+MERGE (n:Company {name: row.Name});
+// Load relationships
+USING PERIODIC COMMIT 10000
+LOAD CSV WITH HEADERS FROM "file:///Import_combined_summary_test.csv" AS row FIELDTERMINATOR '\t'
+MATCH (c:Company {name: row.Name})
+MATCH (n:Comcode {comcode: row.HScode})
+MERGE (c)-[r:IMPORTED]->(n)
+ON CREATE SET r.monthcount = row.MonthCount;
