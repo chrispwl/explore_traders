@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 from json import dumps
-from flask import Flask, g, Response, request, current_app
+from flask import Flask, g, Response, request
 import sys, csv, utils
 import networkx as nx
 
@@ -9,14 +9,6 @@ print("Loading app", app.name)
 # @app.teardown_appcontext
 # def close_db(error):
 #     # print('App teardown', app.name)
-
-def _get_top_nodes(Gph, company, howmany=2):
-    """Generate top-most commodities: returns sorted list of (u, v, d)"""
-    all_edges = Gph.edges(nbunch=[company], data='monthcount')
-    lim = howmany
-    if (lim > len(all_edges)): lim = len(all_edges)
-    sorted_edges = sorted(all_edges, key=lambda tup: -int(tup[lim]))
-    return sorted_edges
 
 @app.route("/")
 def get_index():
@@ -37,6 +29,14 @@ def serialize_cmdty(trade):
         'monthcount': x['monthcount']
     }
 
+def _get_top_nodes(Gph, company, howmany=2):
+    """Generate top-most commodities: returns sorted list of (u, v, d)"""
+    all_edges = Gph.edges(nbunch=[company], data='monthcount')
+    # lim = howmany
+    # if (lim > len(all_edges)): lim = len(all_edges)
+    sorted_edges = sorted(all_edges, key=lambda tup: int(tup[2]), reverse=True)
+    return sorted_edges
+
 @app.route("/graph")
 def get_graph():
     """
@@ -50,7 +50,7 @@ def get_graph():
     global NETX_DB
     nodes = []
     rels = []
-    tops = [t for t in _get_top_nodes(NETX_DB, 'GODIVA UK LIMITED')]
+    tops = [t for t in _get_top_nodes(NETX_DB, 'GODIVA UK LIMITED', howmany=2)]
     if len(tops) > 1:
         top1, top2 = tops[:2]
     else:
@@ -97,7 +97,9 @@ def get_search():
             raise NotImplementedError
         common_HS = [top1[1], top2[1]]
         names = [n for n in nx.common_neighbors(NETX_DB, common_HS[0], common_HS[1])]
-        return Response(dumps([serialize_company(name) for name in names]),
+        rows = [serialize_company(name) for name in names]
+        rows.sort(key=lambda x: x['count'], reverse=True)
+        return Response(dumps(rows),
                         mimetype="application/json")
 
 
