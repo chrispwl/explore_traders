@@ -13,10 +13,11 @@ for action in ['Ex', 'Im']:
         # OR 2, 1, 2, 1, 3 for
         # ['Postcode', 'HScode', 'Name', 'MonthCount']
         for i, row in enumerate(tsvin):
-            Gph.add_node(row[2], type='Name')
-            Gph.add_node(row[1], type='Commodity')
-            Gph.add_edge(row[2], row[1], 
-                direction=action+'ported', monthcount=row[3])
+            if i < 100000:
+                Gph.add_node(row[2], type='Name')
+                Gph.add_node(row[1], type='Commodity')
+                Gph.add_edge(row[2], row[1], 
+                    direction=action+'ported', monthcount=row[3])
 
-nx.write_gml(Gph,'impex_full.graphml')
+nx.write_gml(Gph,'impex_small.graphml')
 
