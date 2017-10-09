@@ -105,7 +105,7 @@ def get_CN_by_text(searchstring, verbose=False):
 	except:
 		logging.error('invalid search string in get_CN_list()')
 		return 0
-	df = pd.read_csv('2017_CN.txt', sep='\t', 
+	df = pd.read_csv('C:\\Users\\Chris\\Parkway Drive\\Trade_finance\\Technology\\SIC_HS_tool\\2017_CN.txt', sep='\t', 
 		encoding='utf-16', warn_bad_lines=True)
 	searchstring = str(searchstring).lower()
 	if verbose: logging.info('Searching for {0}'.format(searchstring))
