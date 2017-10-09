@@ -7,7 +7,6 @@ import pandas
 
 app = Flask(__name__, static_url_path='/static/')
 print("Loading app", app.name)
-DBS_PATH = '/Users/ramintakin/Parkway_Drive/Trade_finance/Technology/SIC_HS_tool/'
 
 
 # @app.teardown_appcontext
@@ -22,6 +21,7 @@ def get_index():
 
 @app.route("/descriptions")
 def get_descriptions():
+    global DBS_PATH
     code = request.args['cn1']
     DF_CN = pandas.read_csv(DBS_PATH+'2017_CN.txt', sep='\t', 
         encoding='utf-16', warn_bad_lines=True)
@@ -122,7 +122,7 @@ def _get_top_edges(Gph, company, howmany=None):
         if howmany is None:
             return sorted_edges
         elif len(sorted_edges) < howmany:
-            print(company, 'only trades', Gph[company])
+            # print(company, 'only trades', Gph[company])
             return sorted_edges
         else:
             results_list = sorted_edges[:howmany]
@@ -164,6 +164,7 @@ def get_graph():
     print('Preparing graph for {0} with {1} common goods. Limited to {2} nodes'.format(
         focus_co, num_nodes, node_limit))
     global NETX_DB
+    global DBS_PATH
     DF_CN = pandas.read_csv(DBS_PATH+'2017_CN.txt', sep='\t', encoding='utf-16', warn_bad_lines=True)
     nodes = []
     rels = []
@@ -201,16 +202,9 @@ def get_graph():
         rels.append({"target": target, "source": 0})
         # print(cmdty[1], end=' ')
     # print(' ')
-    # focal_co_goods_sorted = [
-    #     (c[1], c[2]['monthcount']) for r, c in 
-    #     enumerate(_get_top_edges(NETX_DB, focus_co))]  # if r < 10
-    # print(focal_co_goods_sorted)
-    # print('top goods:')
-    # [print(c[0], c[1], utils.get_desc_by_CN(DF_CN, c[0])['Self-Explanatory text (English)'
-    #     ].values[0]) for c in focal_co_goods_sorted]
     # Just the top goods from focal_co_goods
     common_HS = [tup[1] for tup in _get_top_edges(NETX_DB, focus_co, howmany=num_nodes)]
-    print('checking:')
+    # print('checking:')
     # [print(code, utils.get_desc_by_CN(DF_CN, code)['Self-Explanatory text (English)']
     #     .values[0]) for code in common_HS]
     # Companies trading at least two goods in the SAME DIRECTION as the focal company
@@ -229,8 +223,8 @@ def get_graph():
             names_list = importers
         else:
             names_list = exporters
-        if len(names_list) != 0:
-            node_lim_per_name = int((node_limit - focus_co_goods_limit) / len(names_list) + 1)
+        if len(names_list) != 0:  # TODO: handle case when no related companies found
+            node_lim_per_name = int((node_limit - focus_co_goods_limit) / len(names_list))+1
             for name in names_list:
                 if i < node_limit:
                     conode = serialize_company(company=name, direction=direction)
@@ -245,27 +239,26 @@ def get_graph():
                             i += 1
                             # print('\n+', end=' ')
                             # print(i, conode, end=' ')
-                    for j, cmdty in enumerate(NETX_DB[name]):
-                        if j < node_lim_per_name:
-                            hsnode = serialize_cmdty(good=cmdty, direction=direction)
-                            if hsnode in goods_to_show:
-                                # print(hsnode, end=' ')
-                                # check if the commodity is already there
-                                # on the particular import / export side
-                                try:
-                                    target = nodes.index(hsnode)
-                                except ValueError:
-                                    if i < node_limit:
-                                        nodes.append(hsnode)
-                                        target = i
-                                        i += 1
-                                        # print('+', end=' ')
-                                        # print(i, hsnode['name'], end=' ')
-                                rels.append({"target": target, "source": source})
-                                # print('.', end=' ')
-                                # print(hsnode['name'], end=' ')
-                            # else:
-                            #     print('-', end='')
+                    for cmdty in _get_top_edges(NETX_DB, name, howmany=node_lim_per_name):
+                        hsnode = serialize_cmdty(good=cmdty[1], direction=direction)
+                        if hsnode in goods_to_show:
+                            # print(hsnode, end=' ')
+                            # check if the commodity is already there
+                            # on the particular import / export side
+                            try:
+                                target = nodes.index(hsnode)
+                            except ValueError:
+                                if i < node_limit:
+                                    nodes.append(hsnode)
+                                    target = i
+                                    i += 1
+                                    # print('+', end=' ')
+                                    # print(i, hsnode['name'], end=' ')
+                        # else:
+                        #     print('-', end='')
+                        rels.append({"target": target, "source": source})
+                        # print('.', end=' ')
+                        # print(hsnode['name'], end=' ')
     print('\nSending json for background graph with {0} nodes...'.format(str(i)))
     return Response(dumps({"nodes": nodes, "links": rels}),
         mimetype="application/json")
@@ -274,7 +267,8 @@ if __name__ == '__main__':
     print('Loading graph to memory...')
     NETX_DB = nx.Graph()
     global DBS_PATH
-    NETX_DB = nx.read_gml(DBS_PATH+'impex_full.graphml')
+    DBS_PATH = '/Users/ramintakin/Parkway_Drive/Trade_finance/Technology/SIC_HS_tool/'
+    NETX_DB = nx.read_gml(DBS_PATH+'impex_small.graphml')
     print('loaded', NETX_DB.order(), 'nodes and', NETX_DB.size(), 'edges')
     host='127.0.0.1'
     port=8081

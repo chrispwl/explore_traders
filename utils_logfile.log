@@ -56,3 +56,44 @@ INFO:werkzeug:127.0.0.1 - - [09/Oct/2017 16:31:32] "GET /graph?q=SIM%20FREE%20LT
 INFO:werkzeug:127.0.0.1 - - [09/Oct/2017 16:31:32] "GET / HTTP/1.1" 200 -
 INFO:werkzeug:127.0.0.1 - - [09/Oct/2017 16:31:35] "GET /graph?q=STENA%20DRILLING%20LIMITED&n=2&lim=100 HTTP/1.1" 200 -
 INFO:werkzeug:127.0.0.1 - - [09/Oct/2017 16:31:45] "GET /graph?q=STENA%20DRILLING%20LIMITED&n=2&lim=1000 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [09/Oct/2017 17:16:27] "GET /graph?q=STENA%20DRILLING%20LIMITED&n=2&lim=1000 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [09/Oct/2017 17:16:50] "GET /graph?q=TRANSOCEAN%20ONSHORE%20SUPPORT%20SERVICESLTD&n=2&lim=1000 HTTP/1.1" 200 -
+INFO:werkzeug: * Running on http://127.0.0.1:8081/ (Press CTRL+C to quit)
+INFO:werkzeug:127.0.0.1 - - [09/Oct/2017 17:29:20] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [09/Oct/2017 17:29:22] "GET /graph?q=SIM%20FREE%20LTD&n=2&lim=100 HTTP/1.1" 200 -
+INFO:werkzeug: * Running on http://127.0.0.1:8081/ (Press CTRL+C to quit)
+INFO:werkzeug:127.0.0.1 - - [09/Oct/2017 17:36:30] "GET /graph?q=SIM%20FREE%20LTD&n=2&lim=100 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [09/Oct/2017 17:36:37] "GET /graph?q=SR%20TECHNICS%20SWITZERLAND&n=2&lim=100 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [09/Oct/2017 17:36:43] "GET /graph?q=SIM%20FREE%20LTD&n=2&lim=100 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [09/Oct/2017 17:36:52] "GET /graph?q=ALEXANDER%20MILLS&n=2&lim=100 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [09/Oct/2017 17:37:02] "GET /graph?q=ALEXANDER%20MILLS&n=2&lim=100 HTTP/1.1" 200 -
+INFO:werkzeug: * Running on http://127.0.0.1:8081/ (Press CTRL+C to quit)
+INFO:werkzeug:127.0.0.1 - - [09/Oct/2017 17:52:31] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [09/Oct/2017 17:52:40] "GET /graph?q=ALEXANDER%20MILLS&n=2&lim=100 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [09/Oct/2017 17:55:18] "GET /graph?q=ALEXANDER%20MILLS&n=1&lim=100 HTTP/1.1" 200 -
+INFO:werkzeug: * Running on http://127.0.0.1:8081/ (Press CTRL+C to quit)
+INFO:werkzeug:127.0.0.1 - - [09/Oct/2017 17:56:41] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [09/Oct/2017 17:56:44] "GET /graph?q=ALEXANDER%20MILLS&n=2&lim=100 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [09/Oct/2017 18:01:48] "GET /graph?q=ALEXANDER%20MILLS&n=3&lim=100 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [09/Oct/2017 18:03:01] "GET /graph?q=ALEXANDER%20MILLS&n=2&lim=100 HTTP/1.1" 200 -
+INFO:werkzeug: * Running on http://127.0.0.1:8081/ (Press CTRL+C to quit)
+INFO:werkzeug:127.0.0.1 - - [09/Oct/2017 18:07:22] "GET /graph?q=ALEXANDER%20MILLS&n=2&lim=100 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [09/Oct/2017 18:07:37] "GET /graph?q=ALEXANDER%20MILLS&n=3&lim=100 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [09/Oct/2017 18:07:41] "GET /graph?q=ALEXANDER%20MILLS&n=2&lim=100 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [09/Oct/2017 18:07:45] "GET /graph?q=ALEXANDER%20MILLS&n=1&lim=100 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [09/Oct/2017 18:07:53] "GET /graph?q=ALEXANDER%20MILLS&n=2&lim=100 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [09/Oct/2017 18:07:55] "GET /graph?q=BLACK%20AND%20DECKER%20LIMITED%20BVBA&n=2&lim=100 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [09/Oct/2017 18:08:46] "GET /graph?q=TECHTRONIC%20INDUSTRIES%20ELC%20GMBH&n=2&lim=100 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [09/Oct/2017 18:08:52] "GET /graph?q=TECHTRONIC%20INDUSTRIES%20ELC%20GMBH&n=1&lim=100 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [09/Oct/2017 18:08:57] "GET /graph?q=TECHTRONIC%20INDUSTRIES%20ELC%20GMBH&n=1&lim=200 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [09/Oct/2017 18:09:10] "GET /graph?q=TOOLSTREAM%20LIMITED&n=1&lim=200 HTTP/1.1" 200 -
+INFO:werkzeug: * Running on http://127.0.0.1:8081/ (Press CTRL+C to quit)
+INFO:werkzeug:127.0.0.1 - - [09/Oct/2017 18:10:41] "GET /graph?q=JOHN%20DEERE%20LIMITED&n=1&lim=300 HTTP/1.1" 500 -
+INFO:werkzeug:127.0.0.1 - - [09/Oct/2017 18:10:48] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [09/Oct/2017 18:10:51] "GET /graph?q=SIM%20FREE%20LTD&n=2&lim=100 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [09/Oct/2017 18:11:11] "GET /graph?q=SR%20TECHNICS%20SWITZERLAND&n=2&lim=100 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [09/Oct/2017 18:11:21] "GET /graph?q=SR%20TECHNICS%20SWITZERLAND&n=2&lim=200 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [09/Oct/2017 18:12:11] "GET /graph?q=MAYFLEX%20UK%20LIMITED&n=2&lim=200 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [09/Oct/2017 18:12:18] "GET /graph?q=ENSCO%20SERVICES%20LIMITED&n=2&lim=200 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [09/Oct/2017 18:12:25] "GET /graph?q=ENSCO%20SERVICES%20LIMITED&n=3&lim=200 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [09/Oct/2017 18:12:37] "GET /graph?q=ENSCO%20SERVICES%20LIMITED&n=3&lim=400 HTTP/1.1" 200 -
