@@ -9,6 +9,7 @@ app = Flask(__name__, static_url_path='/static/')
 print("Loading app", app.name)
 DBS_PATH = '/Users/ramintakin/Parkway_Drive/Trade_finance/Technology/SIC_HS_tool/'
 
+
 # @app.teardown_appcontext
 # def close_db(error):
 #     global NETX_DB

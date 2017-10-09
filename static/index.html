@@ -28,7 +28,6 @@
 					<button id="search" class="btn btn-default btn-xs">Search</button>
 					<button id="split" class="btn btn-default btn-xs">Split</button>
 					<button id="unite" class="btn btn-default btn-xs">Unite</button>
-					
 				</div>
 
 
@@ -49,10 +48,10 @@
 							id="node_limit">
 					</div>
 				</div>
-
 			</div>
 		</div>
 	</div>
+
 
 
 
@@ -65,7 +64,6 @@
 	
 
 </script>
-
 
  	  
 
@@ -212,6 +210,7 @@ var trans = d3.zoomIdentity; //<-- identity
 
 
 
+
 function draw() {
 
 	 simulation = d3.forceSimulation(nodes)
@@ -227,8 +226,7 @@ function draw() {
 	    context = canvas.getContext("2d"),
 	//    width = canvas.width,
 	//    height = canvas.height;
-	  
-	
+	  	
 	
 	d3.select(canvas)
 	    .call(d3.drag()
@@ -251,15 +249,12 @@ function draw() {
 	
 	
 	d3.select(canvas).on('click', click);
-	    
-	  
 	
 	
 
 
 	
 	function ticked() {
-		
 	
 				
 		
@@ -286,6 +281,7 @@ function draw() {
 	  	
 		nodes[0].x = 0;
 		nodes[0].y = height/4;
+
 	}
 	
 }
