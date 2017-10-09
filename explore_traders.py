@@ -128,6 +128,23 @@ def _get_top_edges(Gph, company, howmany=None):
         print(company, 'not in database')
         raise NotImplementedError
 
+def _graduated_bands(total_nodes):
+    """Like a tax calculator"""
+    bands = [0, 20, 100, float("inf")]
+    rates = [0, 0, 0.5, 0.25]
+    x = 0
+    prevband = 0
+    for band, rate in zip(bands, rates):
+        if total_nodes > band:
+            x += (band - prevband) * rate
+        elif total_nodes > prevband:
+            x += (total_nodes - prevband) * rate
+        else:
+            return int(x)
+        prevband = band
+    return int(x)
+
+
 @app.route("/graph")
 def get_graph():
     """
@@ -140,12 +157,7 @@ def get_graph():
     focus_co = request.args['q']
     num_nodes = int(request.args['n'])
     node_limit = int(request.args['lim'])
-    if node_limit > 500:
-        focus_co_goods_limit = node_limit - 250
-    elif node_limit > 100:
-        focus_co_goods_limit = node_limit - 40
-    else:
-        focus_co_goods_limit = node_limit - 1
+    focus_co_goods_limit = _graduated_bands(node_limit)
     print('Preparing graph for {0} with {1} common goods. Limited to {2} nodes'.format(
         focus_co, num_nodes, node_limit))
     global NETX_DB
@@ -214,6 +226,7 @@ def get_graph():
             names_list = importers
         else:
             names_list = exporters
+        node_lim_per_name = int((node_limit - focus_co_goods_limit) / len(names_list) + 1)
         for name in names_list:
             if i < node_limit:
                 conode = serialize_company(company=name, direction=direction)
@@ -228,7 +241,7 @@ def get_graph():
                         i += 1
                         # print('\n+', end=' ')
                         # print(i, conode, end=' ')
-                for cmdty in NETX_DB[name]:
+                for j, cmdty in enumerate(NETX_DB[name]) if j < node_lim_per_name:
                     hsnode = serialize_cmdty(good=cmdty, direction=direction)
                     if hsnode in goods_to_show:
                         # print(hsnode, end=' ')
@@ -255,7 +268,7 @@ def get_graph():
 if __name__ == '__main__':
     print('Loading graph to memory...')
     NETX_DB = nx.Graph()
-    NETX_DB = nx.read_gml('impex_small.graphml')
+    NETX_DB = nx.read_gml('impex_full.graphml')
     print('loaded', NETX_DB.order(), 'nodes and', NETX_DB.size(), 'edges')
     host='127.0.0.1'
     port=8081
