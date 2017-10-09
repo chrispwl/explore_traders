@@ -21,11 +21,13 @@
 
 				<div data-role="content">
 					<div class="form-group">
-						<input type="text" value="KOTTKE LTD"
+						<input type="text" value="SIM FREE LTD"
 							placeholder="Search for Company Name" class="form-control"
 							id="company_str">
 					</div>
-					<button id="search" class="btn btn-default">Search</button>
+					<button id="search" class="btn btn-default btn-xs">Search</button>
+					<button id="split" class="btn btn-default btn-xs">Split</button>
+					<button id="unite" class="btn btn-default btn-xs">Unite</button>
 				</div>
 
 
@@ -39,47 +41,18 @@
 							id="num_nodes">
 					</div>
 				</div>
-
-			</div>
-		</div>
-	</div>
-
-
-
-	<!--  	<div class="row">
-		<div class="col-md-5">
-			<div class="panel panel-default">
-				<div class="panel-heading">Search Results</div>
-				<table id="results" class="table table-striped table-hover">
-					<thead>
-						<tr>
-							<th>Company</th>
-							<th>Commodity</th>
-							<th>Month Count</th>
-						</tr>
-					</thead>
-					<tbody>
-					</tbody>
-				</table>
-			</div>
-		</div>
-		<div class="col-md-7">
-		
-				<div class="panel-heading" id="title">Details</div>
-				<div class="row">
-					<div class="col-sm-4 col-md-4">
-						<img src="" class="well" id="poster" />
-					</div>
-					<div class="col-md-8 col-sm-8">
-						<h3>Trading Record</h3>
-						<ul id="crew">
-						</ul>
+				<div data-role="content">
+					<div class="form-group">
+						<input type="text" value="100"
+							placeholder="Limit number of nodes to display" class="form-control"
+							id="node_limit">
 					</div>
 				</div>
 			</div>
-	
+		</div>
 	</div>
--->
+
+
 
 
 	<script type="text/javascript"
@@ -92,121 +65,229 @@
 
 </script>
 
-<!-- 	  
-<canvas width="960" height="960"></canvas>
+ 	  
+
+<div id="container"></div>
 
  
 <script src="https://d3js.org/d3.v4.min.js"></script>
+
 <script>
 
+var width = 800, height = 600;
+var canvas = d3.select('#container').append('canvas').attr('width', width).attr('height', height);
 
+
+$("#search").click( function()
+	       {
+		  var query=$("#company_str").val();
+		  var query2=$("#num_nodes").val();
+		  var query3=$("#node_limit").val();
+		  
+		d3.json("/graph?q=" + encodeURIComponent(query) + "&n=" +
+   			  	encodeURIComponent(query2) + "&lim=" +
+   			  	encodeURIComponent(query3), function(error, json) {
+		  if (error) throw error;
+		       		  
+		  	graph = json;
+		  
+			nodes = graph.nodes;
+	   		links = graph.links;
+		
+	   		   		
+	   		draw();
+		});
+	       }
+);	
+
+
+  
+d3.select('button#split').on('mousedown', function(d) {
+
+	simulation.stop();
+
+	simulation
+		.force('charge', d3.forceManyBody().strength(
+				function(d) { 
+				
+					return d.type === "company" ? -100 : 0; 
+					
+				} 		
+		
+		))
+		 .force("link", d3.forceLink(links).distance(40).strength(1))
+		.force('xPos', d3.forceX(function(d) { 
+			
+			return d.direction === "Imported" ? width * -0.5 : width * 0.5; 
+			
+		}) )
+		.force('yPos', d3.forceY(function(d) { 
+			
+			return d.type === "hscode" ? 0 : height * -0.8; 
+			
+		}));
+		
+	simulation.alpha(0.5);
+
+	simulation.restart();
+
+}); // button listener/handler
+
+d3.select('button#unite').on('mousedown', function(d) {
+
+	simulation.stop();
+
+	simulation
+	 .force("charge", d3.forceManyBody().strength(-30))
+	    .force("link", d3.forceLink(links).distance(40).strength(1))
+	    .force("x", d3.forceX())
+	    .force("y", d3.forceY());
+		
+	simulation.alpha(0.5);
+
+	simulation.restart();
+
+}); // button listener/handler
+
+
+
+
+ // Toggle children on click.
+    function click() {
+	 
+    
+	const a = this.parentNode;
+    const m = d3.mouse(this);
+    
+    console.log("x=" + m[0] +"y=" + m[1]);
+    
+    console.log("x=" + trans.invertX(m[0]) +"y=" + trans.invertY(m[1]));
+
+    
+    	    const d = simulation.find(
+    	      trans.invertX(m[0] - width / 2),
+    	      trans.invertY(m[1] - height / 2),
+    	      10);
+    	 
+    	
+     console.dir(d);
+	 
+     
+        context.clearRect(0, 0, canvas.width, canvas.height);
+             
+        var query2=$("#num_nodes").val();
+        var query3=$("#node_limit").val();
+			
+   		d3.json("/graph?q=" + encodeURIComponent(d.name) + "&n=" +
+   			  	encodeURIComponent(query2) + "&lim=" +
+   			  	encodeURIComponent(query3), function(error, json) {
+   			
+   		
+   			
+   			if (error) throw error;
+   			  graph = json;
+   			  
+   			  nodes = graph.nodes;
+   			  links = graph.links;
+   			  
+   			  draw();
+   		
+   		});
+    	
+	}
+    
+
+    
 
 var nodes, 
 	links,
 	context,
 	canvas, 
 	simulation;
-//
-//d3.json("/graph", function(error, graph) {
-//	if (error) return;
-   
-//	nodes = graph.nodes;
-//	links = graph.links;
-		
-//	draw();
-	
-//});
+
+var trans = d3.zoomIdentity; //<-- identity
 
 
-$("#search").click( function()
-	       {
-		  var query=$("#company_str").val();
-		  	
-		//  graph = null;
-	    // 	link = svg.selectAll(".link");
-	   // 	node = svg.selectAll(".node"); 
-	    	
-	   //  	d3.selectAll("svg > *").remove();
-		  
-		  d3.json("/graph?q=" + encodeURIComponent(query), function(error, json) {
-   		  if (error) throw error;
-   		       		  
-   		  graph = json;
-   		  
-   			nodes = graph.nodes;
-	   		links = graph.links;
-   		
-	   		draw();
-   		});
-	       }
-	  );	
+
 
 
 function draw() {
 
 	 simulation = d3.forceSimulation(nodes)
-	    .force("charge", d3.forceManyBody())
-	    .force("link", d3.forceLink(links).distance(20).strength(1))
+	 
+	 //.alpha(.02)
+	    .force("charge", d3.forceManyBody().strength(-30))
+	    .force("link", d3.forceLink(links).distance(40).strength(1))
 	    .force("x", d3.forceX())
 	    .force("y", d3.forceY())
 	    .on("tick", ticked);
 	
 	 canvas = document.querySelector("canvas"),
 	    context = canvas.getContext("2d"),
-	    width = canvas.width,
-	    height = canvas.height;
-	
+	//    width = canvas.width,
+	//    height = canvas.height;
+	  	
 	
 	d3.select(canvas)
 	    .call(d3.drag()
 	        .container(canvas)
 	        .subject(dragsubject)
+	       // .on("mouseover",tooltip)
 	        .on("start", dragstarted)
 	        .on("drag", dragged)
 	        .on("end", dragended));
-	
+	       
+    function zoomed(d) {
+		  trans = d3.event.transform; //<-- set to current transform
+		  ticked(); //<-- use tick to redraw regardless of event
+		}
+	    
+	  //now the zooming part
+	   d3.select(canvas).call(d3.zoom().scaleExtent([0.2, 10]).on("zoom", zoomed))
 
 	
-	d3.select(canvas).on('click', function() {
-	    const mouse = d3.mouse(this);
-	    const x = mouse[0]; 
-	    const y = mouse[1];
-			
-	    console.log("x="& x.toString() & " y=" & y.toString());
-	    
-	    // get the datum to highlight
-	});
 	
+	
+	d3.select(canvas).on('click', click);
 	
 	
 
 
 	
 	function ticked() {
-	  context.clearRect(0, 0, width, height);
-	  context.save();
-	  context.translate(width / 2, height / 2);
 	
-	  context.beginPath();
-	  links.forEach(drawLink);
-	  context.strokeStyle = "#eee";
-	  context.stroke();
+				
+		
+	 	context.clearRect(0, 0, width, height);
+	  	context.save();
+	  	//context.translate(width / 2, height / 2);
+	  	
+	  	context.translate(trans.x + width/2, trans.y + height/2); //<-- this always applies a transform
+	  	context.scale(trans.k, trans.k);
 	
-	  context.beginPath();
-	  nodes.forEach(drawNode);
-	  context.fillStyle = "indianred";
-	  context.fill();
+	 	context.beginPath();
+	  	links.forEach(drawLink);
+  		context.strokeStyle = "#CCC";
+  		context.lineWidth=0.5;
+	 	context.stroke();
+	
+	 
+	  	nodes.forEach(drawNode);
+	  	
+	 	
 	  
-	  context.strokeStyle = "#999";
-	  context.stroke();
-	
-	  context.restore();
+  		
+	  	context.restore();
+	  	
+		nodes[0].x = 0;
+		nodes[0].y = height/4;
+
 	}
 	
 }
 
 function dragsubject() {
-  return simulation.find(d3.event.x - width / 2, d3.event.y - height / 2);
+  return simulation.find(trans.invertX(d3.event.x - width / 2), trans.invertY(d3.event.y - height / 2), 10);
 }
 
 function dragstarted() {
@@ -216,14 +297,14 @@ function dragstarted() {
 }
 
 function dragged() {
-  d3.event.subject.fx = d3.event.x;
+ d3.event.subject.fx = d3.event.x;
   d3.event.subject.fy = d3.event.y;
 }
 
 function dragended() {
   if (!d3.event.active) simulation.alphaTarget(0);
-  d3.event.subject.fx = null;
-  d3.event.subject.fy = null;
+  //d3.event.subject.fx = null;  Commenting out makes sticky
+  //d3.event.subject.fy = null;
 }
 
 function drawLink(d) {
@@ -232,13 +313,49 @@ function drawLink(d) {
 }
 
 function drawNode(d) {
-  	context.moveTo(d.x + 3, d.y);
-  	context.arc(d.x, d.y, 3, 0, 2 * Math.PI);
+	
+	context.font="8px Arial";
+	// Companies circles
+ 		
+	if (d.type == "company")	{
+		context.beginPath();	
+	  	context.moveTo(d.x + Math.pow(d.size), d.y);
+	  	context.arc(d.x, d.y, 2* Math.pow(d.size,0.25) , 0, 2 * Math.PI);
+		
+		if (d.direction == "Imported") context.fillStyle = "yellow";
+		else if (d.direction == "Exported") context.fillStyle = "green";
+		else context.fillStyle = "purple";
+		
+		context.fill();
+		
+		context.fillStyle = "black";
+		context.fillText(d.name,d.x,d.y);
+
+		
+	}		
+		
+	if (d.type == "hscode")	{
+		
+		context.beginPath();	
+	  	context.moveTo(d.x + Math.pow(d.size), d.y);
+	  	context.arc(d.x, d.y, 0.5 * Math.pow(d.size,0.25) , 0, 2 * Math.PI);
+	  	
+		if (d.direction == "Imported") context.fillStyle = "red";
+		else if (d.direction == "Exported") context.fillStyle = "blue";
+
+		context.fill();
+	}
+			
+	context.strokeStyle = "#CCC";
+  	context.stroke();
+  	
+
+  	
 }
 
 </script>
 
--->
+<!--
 
 <style type="text/css">
 
@@ -294,7 +411,7 @@ font-weight: 400;
 }
 </style>
 
-	<!--  BELOW IS THE SVG IMPLEMENTATION  -->
+	<!--  BELOW IS THE SVG IMPLEMENTATION  
 	<div id="graph"></div>
 	<script type="text/javascript">
 
@@ -485,7 +602,7 @@ font-weight: 400;
 
 </script>
 
-
+-->
 	<div class="container">
 		<div class="row">
 			<div class="col-sm-4 col-md-4">

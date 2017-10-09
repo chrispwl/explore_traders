@@ -63,15 +63,17 @@ def wordcloud(CNlist=deft_CNlist, howmany=20):
 def _make_8char_CN(trialstring):
 	# Converts a Commodity Code to an 8-digit string
 	# Insert leading zero for HS chapters 1 to 9:
-	if len(str(trialstring))==7:
-		outstr = '0'+str(trialstring)
-	elif len(str(trialstring))==1:
-		outstr = '0'+str(trialstring)
+	s = str(trialstring)
+	x = len(str(trialstring)) 
+	if x==7:
+		outstr = '0'+s
+	elif x==1:
+		outstr = '0'+s
 	# Insert trailing zeros for 2-digit HS chapters (anonymised)
-	elif len(str(trialstring))==2:
-		outstr = str(trialstring)+'000000'
+	elif x==2:
+		outstr = s+'000000'
 	else:
-		outstr = str(trialstring)
+		outstr = s
 	return outstr
 
 
@@ -131,28 +133,32 @@ def get_desc_by_HSchapter(chapternum, verbose=False):
 	return outdf
 
 
-def get_desc_by_CN(CNcode, verbose=False):
+def get_desc_by_CN(df, CNcode, verbose=False):
 	try:
 		assert (len(str(CNcode))==8) | (len(str(CNcode))==7)
 	except:
 		logging.error('invalid CN code supplied to get_desc_by_CN()')
 		return 0
 	if len(str(CNcode))==7: CNcode = '0'+str(CNcode)
-	df = pd.read_csv('2017_CN.txt', sep='\t', 
-		encoding='utf-16', warn_bad_lines=True)
-	foundstrings = df.loc[df.loc[:,'Commodity Code'].map(
-		lambda x: _make_8char_CN(x)[:8]
-		).str.match(CNcode),:]
+	# df = pd.read_csv('2017_CN.txt', sep='\t', 
+	# 	encoding='utf-16', warn_bad_lines=True)
+	# foundstrings = df.loc[df.loc[:,'Commodity Code'].map(
+	# 	lambda x: _make_8char_CN(x)[:8]
+	# 	).str.match(CNcode),:]
+	foundstrings = df.loc[df.loc[:,'Commodity Code'].str.match(CNcode),:]
+	# print(foundstrings)
+	# except:
 	if foundstrings.empty:
 		outdf = pd.DataFrame({
-			'Code': [CNcode],
-			'S': ['unk'],
-			'Z-Desc': ['{0} not found'.format(CNcode)]
+			'Commodity Code': [CNcode],
+			'Supplementary Unit': ['unk'],
+			'Self-Explanatory text (English)': ['Code not found']
 			})
-		# print(outdf)
+		print('empty df', end=' ')
 		# _print_HS(outdf)
 	else:
 		outdf = _tidyup_df(foundstrings)  # return 8-digit string
+	# print(outdf)
 
 	return outdf
 
@@ -162,7 +168,8 @@ def update_progress_bar(progress, time_elapsed, prefix="", suffix=""): # remcoun
     togo = time_elapsed*(1-progress)/progress/60
     if togo > 240:
         print("\rProgress: [{0:.<20s}] {1:.2f}%, {2:,}s elapsed, ~{3:,} hrs to go{4}".format(
-                '#'*int(progress*20), progress*100, int(time_elapsed), int(togo/60), str(suffix)
+                '#'*int(progress*20), progress*100, int(time_elapsed), int(togo/60), 
+                str(suffix)
             ), end='')
     else:
         print("\rProgress: [{0:.<20s}] {1:.2f}%, {2:,}s elapsed, ~{3:,} mins to go{4}".format(

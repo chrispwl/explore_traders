@@ -3,9 +3,12 @@ from json import dumps
 from flask import Flask, Response, request
 import networkx as nx
 import utils
+import pandas
 
 app = Flask(__name__, static_url_path='/static/')
 print("Loading app", app.name)
+DBS_PATH = '/Users/ramintakin/Parkway_Drive/Trade_finance/Technology/SIC_HS_tool/'
+
 
 # @app.teardown_appcontext
 # def close_db(error):
@@ -20,8 +23,10 @@ def get_index():
 @app.route("/descriptions")
 def get_descriptions():
     code = request.args['cn1']
+    DF_CN = pandas.read_csv(DBS_PATH+'2017_CN.txt', sep='\t', 
+        encoding='utf-16', warn_bad_lines=True)
     print("checking for", code)
-    return utils.get_desc_by_CN(code)['Self-Explanatory text (English)'].values[0]
+    return utils.get_desc_by_CN(DF_CN, code)['Self-Explanatory text (English)'].values[0]
 
 def dir_edge_count(node, direction):
     global NETX_DB
@@ -126,6 +131,23 @@ def _get_top_edges(Gph, company, howmany=None):
         print(company, 'not in database')
         raise NotImplementedError
 
+def _graduated_bands(total_nodes):
+    """Like a tax calculator"""
+    bands = [0, 20, 100, float("inf")]
+    rates = [0, 0, 0.5, 0.25]
+    x = 0
+    prevband = 0
+    for band, rate in zip(bands, rates):
+        if total_nodes > band:
+            x += (band - prevband) * rate
+        elif total_nodes > prevband:
+            x += (total_nodes - prevband) * rate
+        else:
+            return int(x)
+        prevband = band
+    return int(x)
+
+
 @app.route("/graph")
 def get_graph():
     """
@@ -137,40 +159,60 @@ def get_graph():
     """
     focus_co = request.args['q']
     num_nodes = int(request.args['n'])
-    print('Preparing graph for {0} with {1} common goods'.format(focus_co, num_nodes))
+    node_limit = int(request.args['lim'])
+    focus_co_goods_limit = _graduated_bands(node_limit)
+    print('Preparing graph for {0} with {1} common goods. Limited to {2} nodes'.format(
+        focus_co, num_nodes, node_limit))
     global NETX_DB
+    DF_CN = pandas.read_csv(DBS_PATH+'2017_CN.txt', sep='\t', encoding='utf-16', warn_bad_lines=True)
     nodes = []
     rels = []
     i =0
     # Add the focal company
     nodes.append(serialize_company(focus_co, direction='focal'))
     i += 1
-    # Goods traded by focal company
-    focal_co_goods = NETX_DB.edges(nbunch=[focus_co], data=True)
+    # Goods traded by focal company, ranked by most common first
+    focal_co_goods = _get_top_edges(NETX_DB, focus_co)
+    # other_goods_import = {
+    #         "type": "hscode",
+    #         "direction": "Imported",
+    #         "size": 0,
+    #         "size_metric": "Companies trading (Imported or Exported)",
+    #         "name": "others"
+    #         }
+    # other_goods_export = {
+    #         "type": "hscode",
+    #         "direction": "Exported",
+    #         "size": 0,
+    #         "size_metric": "Companies trading (Imported or Exported)",
+    #         "name": "others"
+    #         }
+    # TODO: add optional cut-off for weak links (low monthcount)
+    # TODO: collate the minor goods into a single 'others' node
     for cmdty in focal_co_goods:
         hsnode = serialize_cmdty(good=cmdty[1], direction=cmdty[2]['direction'])
         try:
             target = nodes.index(hsnode)
         except ValueError:
-            nodes.append(hsnode)
-            target = i
-            i += 1
+            if i < focus_co_goods_limit:
+                nodes.append(hsnode)
+                target = i
+                i += 1
         rels.append({"target": target, "source": 0})
         # print(cmdty[1], end=' ')
     # print(' ')
-    focal_co_goods_sorted = [
-        (c[1], c[2]['monthcount']) for r, c in 
-        enumerate(_get_top_edges(NETX_DB, focus_co)) if r < 10
-        ]
+    # focal_co_goods_sorted = [
+    #     (c[1], c[2]['monthcount']) for r, c in 
+    #     enumerate(_get_top_edges(NETX_DB, focus_co))]  # if r < 10
     # print(focal_co_goods_sorted)
-    print('top goods:')
-    [print(c[0], c[1], utils.get_desc_by_CN(c[0])['Self-Explanatory text (English)'
-        ].values[0]) for c in focal_co_goods_sorted]
-    # Just the top goods from focal_co_gods
+    # print('top goods:')
+    # [print(c[0], c[1], utils.get_desc_by_CN(DF_CN, c[0])['Self-Explanatory text (English)'
+    #     ].values[0]) for c in focal_co_goods_sorted]
+    # Just the top goods from focal_co_goods
     common_HS = [tup[1] for tup in _get_top_edges(NETX_DB, focus_co, howmany=num_nodes)]
     print('checking:')
-    [print(code, utils.get_desc_by_CN(code)['Self-Explanatory text (English)'].values[0]
-        ) for code in common_HS]
+    # [print(code, utils.get_desc_by_CN(DF_CN, code)['Self-Explanatory text (English)']
+    #     .values[0]) for code in common_HS]
     # Companies trading at least two goods in the SAME DIRECTION as the focal company
     importers = [name for name in common_goods_traded(NETX_DB, common_HS, 
         direction='Imported', exclude=focus_co)]
@@ -187,47 +229,52 @@ def get_graph():
             names_list = importers
         else:
             names_list = exporters
-        for name in names_list:
-            # if i < 5000:
-            conode = serialize_company(company=name, direction=direction)
-            try:
-                source = nodes.index(conode)
-                # print('\n_', end='')
-                # print(i, conode['name'], end=' ')
-            except ValueError:
-                nodes.append(conode)
-                source = i
-                i += 1
-                # print('\n+', end=' ')
-                # print(i, conode, end=' ')
-            for cmdty in NETX_DB[name]:
-                hsnode = serialize_cmdty(good=cmdty, direction=direction)
-                if hsnode in goods_to_show:
-                    # print(hsnode, end=' ')
-                    # check if the commodity is already there
-                    # on the particular import / export side
+        if len(names_list) != 0:
+            node_lim_per_name = int((node_limit - focus_co_goods_limit) / len(names_list) + 1)
+            for name in names_list:
+                if i < node_limit:
+                    conode = serialize_company(company=name, direction=direction)
                     try:
-                        target = nodes.index(hsnode)
+                        source = nodes.index(conode)
+                        # print('\n_', end='')
+                        # print(i, conode['name'], end=' ')
                     except ValueError:
-                        nodes.append(hsnode)
-                        target = i
-                        i += 1
-                        # print('+', end=' ')
-                        # print(i, hsnode['name'], end=' ')
-                    # else:  # executes if try statement raised no exception
-                    rels.append({"target": target, "source": source})
-                    # print('.', end=' ')
-                    # print(hsnode['name'], end=' ')
-                # else:
-                #     print('-', end='')
-    print('\nSending json for background graph...')
+                        if i < node_limit:
+                            nodes.append(conode)
+                            source = i
+                            i += 1
+                            # print('\n+', end=' ')
+                            # print(i, conode, end=' ')
+                    for j, cmdty in enumerate(NETX_DB[name]):
+                        if j < node_lim_per_name:
+                            hsnode = serialize_cmdty(good=cmdty, direction=direction)
+                            if hsnode in goods_to_show:
+                                # print(hsnode, end=' ')
+                                # check if the commodity is already there
+                                # on the particular import / export side
+                                try:
+                                    target = nodes.index(hsnode)
+                                except ValueError:
+                                    if i < node_limit:
+                                        nodes.append(hsnode)
+                                        target = i
+                                        i += 1
+                                        # print('+', end=' ')
+                                        # print(i, hsnode['name'], end=' ')
+                                rels.append({"target": target, "source": source})
+                                # print('.', end=' ')
+                                # print(hsnode['name'], end=' ')
+                            # else:
+                            #     print('-', end='')
+    print('\nSending json for background graph with {0} nodes...'.format(str(i)))
     return Response(dumps({"nodes": nodes, "links": rels}),
         mimetype="application/json")
 
 if __name__ == '__main__':
     print('Loading graph to memory...')
     NETX_DB = nx.Graph()
-    NETX_DB = nx.read_gml('impex_full.graphml')
+    global DBS_PATH
+    NETX_DB = nx.read_gml(DBS_PATH+'impex_full.graphml')
     print('loaded', NETX_DB.order(), 'nodes and', NETX_DB.size(), 'edges')
     host='127.0.0.1'
     port=8081
