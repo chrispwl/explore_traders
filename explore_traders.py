@@ -7,6 +7,7 @@ import pandas
 
 app = Flask(__name__, static_url_path='/static/')
 print("Loading app", app.name)
+DBS_PATH = '/Users/ramintakin/Parkway_Drive/Trade_finance/Technology/SIC_HS_tool/'
 
 # @app.teardown_appcontext
 # def close_db(error):
@@ -21,7 +22,8 @@ def get_index():
 @app.route("/descriptions")
 def get_descriptions():
     code = request.args['cn1']
-    DF_CN = pandas.read_csv('2017_CN.txt', sep='\t', encoding='utf-16', warn_bad_lines=True)
+    DF_CN = pandas.read_csv(DBS_PATH+'2017_CN.txt', sep='\t', 
+        encoding='utf-16', warn_bad_lines=True)
     print("checking for", code)
     return utils.get_desc_by_CN(DF_CN, code)['Self-Explanatory text (English)'].values[0]
 
@@ -161,7 +163,7 @@ def get_graph():
     print('Preparing graph for {0} with {1} common goods. Limited to {2} nodes'.format(
         focus_co, num_nodes, node_limit))
     global NETX_DB
-    DF_CN = pandas.read_csv('/Users/ramintakin/Parkway_Drive/Trade_finance/Technology/SIC_HS_tool/2017_CN.txt', sep='\t', encoding='utf-16', warn_bad_lines=True)
+    DF_CN = pandas.read_csv(DBS_PATH+'2017_CN.txt', sep='\t', encoding='utf-16', warn_bad_lines=True)
     nodes = []
     rels = []
     i =0
@@ -270,7 +272,8 @@ def get_graph():
 if __name__ == '__main__':
     print('Loading graph to memory...')
     NETX_DB = nx.Graph()
-    NETX_DB = nx.read_gml('/Users/ramintakin/Parkway_Drive/Trade_finance/Technology/SIC_HS_tool/impex_full.graphml')
+    global DBS_PATH
+    NETX_DB = nx.read_gml(DBS_PATH+'impex_full.graphml')
     print('loaded', NETX_DB.order(), 'nodes and', NETX_DB.size(), 'edges')
     host='127.0.0.1'
     port=8081
