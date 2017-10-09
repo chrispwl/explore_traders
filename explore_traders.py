@@ -241,26 +241,27 @@ def get_graph():
                         i += 1
                         # print('\n+', end=' ')
                         # print(i, conode, end=' ')
-                for j, cmdty in enumerate(NETX_DB[name]) if j < node_lim_per_name:
-                    hsnode = serialize_cmdty(good=cmdty, direction=direction)
-                    if hsnode in goods_to_show:
-                        # print(hsnode, end=' ')
-                        # check if the commodity is already there
-                        # on the particular import / export side
-                        try:
-                            target = nodes.index(hsnode)
-                        except ValueError:
-                            if i < node_limit:
-                                nodes.append(hsnode)
-                                target = i
-                                i += 1
-                                # print('+', end=' ')
-                                # print(i, hsnode['name'], end=' ')
-                        if i <= node_limit: rels.append({"target": target, "source": source})
-                        # print('.', end=' ')
-                        # print(hsnode['name'], end=' ')
-                    # else:
-                    #     print('-', end='')
+                for j, cmdty in enumerate(NETX_DB[name]):
+                    if j < node_lim_per_name:
+                        hsnode = serialize_cmdty(good=cmdty, direction=direction)
+                        if hsnode in goods_to_show:
+                            # print(hsnode, end=' ')
+                            # check if the commodity is already there
+                            # on the particular import / export side
+                            try:
+                                target = nodes.index(hsnode)
+                            except ValueError:
+                                if i < node_limit:
+                                    nodes.append(hsnode)
+                                    target = i
+                                    i += 1
+                                    # print('+', end=' ')
+                                    # print(i, hsnode['name'], end=' ')
+                            if i <= node_limit: rels.append({"target": target, "source": source})
+                            # print('.', end=' ')
+                            # print(hsnode['name'], end=' ')
+                        # else:
+                        #     print('-', end='')
     print('\nSending json for background graph with {0} nodes...'.format(str(i)))
     return Response(dumps({"nodes": nodes, "links": rels}),
         mimetype="application/json")
