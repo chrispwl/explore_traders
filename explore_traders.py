@@ -161,7 +161,7 @@ def get_graph():
     print('Preparing graph for {0} with {1} common goods. Limited to {2} nodes'.format(
         focus_co, num_nodes, node_limit))
     global NETX_DB
-    DF_CN = pandas.read_csv('2017_CN.txt', sep='\t', encoding='utf-16', warn_bad_lines=True)
+    DF_CN = pandas.read_csv('/Users/ramintakin/Parkway_Drive/Trade_finance/Technology/SIC_HS_tool/2017_CN.txt', sep='\t', encoding='utf-16', warn_bad_lines=True)
     nodes = []
     rels = []
     i =0
@@ -195,7 +195,7 @@ def get_graph():
                 nodes.append(hsnode)
                 target = i
                 i += 1
-        if i <= focus_co_goods_limit: rels.append({"target": target, "source": 0})
+        rels.append({"target": target, "source": 0})
         # print(cmdty[1], end=' ')
     # print(' ')
     # focal_co_goods_sorted = [
@@ -208,8 +208,8 @@ def get_graph():
     # Just the top goods from focal_co_goods
     common_HS = [tup[1] for tup in _get_top_edges(NETX_DB, focus_co, howmany=num_nodes)]
     print('checking:')
-    [print(code, utils.get_desc_by_CN(DF_CN, code)['Self-Explanatory text (English)']
-        .values[0]) for code in common_HS]
+    # [print(code, utils.get_desc_by_CN(DF_CN, code)['Self-Explanatory text (English)']
+    #     .values[0]) for code in common_HS]
     # Companies trading at least two goods in the SAME DIRECTION as the focal company
     importers = [name for name in common_goods_traded(NETX_DB, common_HS, 
         direction='Imported', exclude=focus_co)]
@@ -226,42 +226,43 @@ def get_graph():
             names_list = importers
         else:
             names_list = exporters
-        node_lim_per_name = int((node_limit - focus_co_goods_limit) / len(names_list) + 1)
-        for name in names_list:
-            if i < node_limit:
-                conode = serialize_company(company=name, direction=direction)
-                try:
-                    source = nodes.index(conode)
-                    # print('\n_', end='')
-                    # print(i, conode['name'], end=' ')
-                except ValueError:
-                    if i < node_limit:
-                        nodes.append(conode)
-                        source = i
-                        i += 1
-                        # print('\n+', end=' ')
-                        # print(i, conode, end=' ')
-                for j, cmdty in enumerate(NETX_DB[name]):
-                    if j < node_lim_per_name:
-                        hsnode = serialize_cmdty(good=cmdty, direction=direction)
-                        if hsnode in goods_to_show:
-                            # print(hsnode, end=' ')
-                            # check if the commodity is already there
-                            # on the particular import / export side
-                            try:
-                                target = nodes.index(hsnode)
-                            except ValueError:
-                                if i < node_limit:
-                                    nodes.append(hsnode)
-                                    target = i
-                                    i += 1
-                                    # print('+', end=' ')
-                                    # print(i, hsnode['name'], end=' ')
-                            if i <= node_limit: rels.append({"target": target, "source": source})
-                            # print('.', end=' ')
-                            # print(hsnode['name'], end=' ')
-                        # else:
-                        #     print('-', end='')
+        if len(names_list) != 0:
+            node_lim_per_name = int((node_limit - focus_co_goods_limit) / len(names_list) + 1)
+            for name in names_list:
+                if i < node_limit:
+                    conode = serialize_company(company=name, direction=direction)
+                    try:
+                        source = nodes.index(conode)
+                        # print('\n_', end='')
+                        # print(i, conode['name'], end=' ')
+                    except ValueError:
+                        if i < node_limit:
+                            nodes.append(conode)
+                            source = i
+                            i += 1
+                            # print('\n+', end=' ')
+                            # print(i, conode, end=' ')
+                    for j, cmdty in enumerate(NETX_DB[name]):
+                        if j < node_lim_per_name:
+                            hsnode = serialize_cmdty(good=cmdty, direction=direction)
+                            if hsnode in goods_to_show:
+                                # print(hsnode, end=' ')
+                                # check if the commodity is already there
+                                # on the particular import / export side
+                                try:
+                                    target = nodes.index(hsnode)
+                                except ValueError:
+                                    if i < node_limit:
+                                        nodes.append(hsnode)
+                                        target = i
+                                        i += 1
+                                        # print('+', end=' ')
+                                        # print(i, hsnode['name'], end=' ')
+                                rels.append({"target": target, "source": source})
+                                # print('.', end=' ')
+                                # print(hsnode['name'], end=' ')
+                            # else:
+                            #     print('-', end='')
     print('\nSending json for background graph with {0} nodes...'.format(str(i)))
     return Response(dumps({"nodes": nodes, "links": rels}),
         mimetype="application/json")
@@ -269,7 +270,7 @@ def get_graph():
 if __name__ == '__main__':
     print('Loading graph to memory...')
     NETX_DB = nx.Graph()
-    NETX_DB = nx.read_gml('impex_full.graphml')
+    NETX_DB = nx.read_gml('/Users/ramintakin/Parkway_Drive/Trade_finance/Technology/SIC_HS_tool/impex_full.graphml')
     print('loaded', NETX_DB.order(), 'nodes and', NETX_DB.size(), 'edges')
     host='127.0.0.1'
     port=8081

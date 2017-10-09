@@ -168,7 +168,8 @@ def update_progress_bar(progress, time_elapsed, prefix="", suffix=""): # remcoun
     togo = time_elapsed*(1-progress)/progress/60
     if togo > 240:
         print("\rProgress: [{0:.<20s}] {1:.2f}%, {2:,}s elapsed, ~{3:,} hrs to go{4}".format(
-                '#'*int(progress*20), progress*100, int(time_elapsed), int(togo/60), str(suffix)
+                '#'*int(progress*20), progress*100, int(time_elapsed), int(togo/60), 
+                str(suffix)
             ), end='')
     else:
         print("\rProgress: [{0:.<20s}] {1:.2f}%, {2:,}s elapsed, ~{3:,} mins to go{4}".format(

@@ -45,3 +45,14 @@ INFO:werkzeug:127.0.0.1 - - [09/Oct/2017 15:49:11] "GET /graph?q=THE%20BOOTS%20C
 INFO:werkzeug: * Running on http://127.0.0.1:8081/ (Press CTRL+C to quit)
 INFO:werkzeug:127.0.0.1 - - [09/Oct/2017 15:56:56] "GET /graph?q=TESCO%20PLC&n=3&lim=100 HTTP/1.1" 200 -
 INFO:werkzeug:127.0.0.1 - - [09/Oct/2017 15:58:42] "GET /graph?q=TESCO%20PLC&n=2&lim=100 HTTP/1.1" 500 -
+INFO:werkzeug: * Running on http://127.0.0.1:8081/ (Press CTRL+C to quit)
+INFO:werkzeug:127.0.0.1 - - [09/Oct/2017 16:17:10] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [09/Oct/2017 16:17:10] "GET /graph?q=SIM%20FREE%20LTD&n=2&lim=100 HTTP/1.1" 500 -
+INFO:werkzeug:127.0.0.1 - - [09/Oct/2017 16:17:13] "GET /graph?q=SIM%20FREE%20LTD&n=2&lim=100 HTTP/1.1" 500 -
+INFO:werkzeug:127.0.0.1 - - [09/Oct/2017 16:17:15] "GET /graph?q=SIM%20FREE%20LTD&n=2&lim=100 HTTP/1.1" 500 -
+INFO:werkzeug:127.0.0.1 - - [09/Oct/2017 16:17:20] "GET /graph?q=SIM%20FREE%20LTD&n=2&lim=100 HTTP/1.1" 500 -
+INFO:werkzeug: * Running on http://127.0.0.1:8081/ (Press CTRL+C to quit)
+INFO:werkzeug:127.0.0.1 - - [09/Oct/2017 16:31:32] "GET /graph?q=SIM%20FREE%20LTD&n=2&lim=100 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [09/Oct/2017 16:31:32] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [09/Oct/2017 16:31:35] "GET /graph?q=STENA%20DRILLING%20LIMITED&n=2&lim=100 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [09/Oct/2017 16:31:45] "GET /graph?q=STENA%20DRILLING%20LIMITED&n=2&lim=1000 HTTP/1.1" 200 -
