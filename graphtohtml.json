@@ -1,0 +1,204 @@
+{
+	"nodes": [
+		{
+			"id": "0",
+			"type": "company",
+			"direction": "focal",
+			"size": 12,
+			"size_metric": "HS code diversity",
+			"name": "ABCD Plc",
+			"postcode": "AB12 CDE"
+		},
+		{
+			"id": "1",
+			"type": "hscode",
+			"direction": "Imported",
+			"size": 12,
+			"size_metric": "Companies trading (Imported or Exported)",
+			"name": "849302"
+		},
+		{
+			"id": "2",
+			"type": "hscode",
+			"direction": "Imported",
+			"size": 12,
+			"size_metric": "Companies trading (Imported or Exported)",
+			"name": "849302"
+		},
+		{
+			"id": "3",
+			"type": "hscode",
+			"direction": "Imported",
+			"size": 12,
+			"size_metric": "Companies trading (Imported or Exported)",
+			"name": "849302"
+		},
+		{
+			"id": "4",
+			"type": "hscode",
+			"direction": "Imported",
+			"size": 12,
+			"size_metric": "Companies trading (Imported or Exported)",
+			"name": "849302"
+		},
+		{
+			"id": "5",
+			"type": "hscode",
+			"direction": "Imported",
+			"size": 22,
+			"size_metric": "Companies trading (Imported or Exported)",
+			"name": "others"
+		},
+		{
+			"id": "6",
+			"type": "hscode",
+			"direction": "Exported",
+			"size": 12,
+			"size_metric": "Companies trading (Imported or Exported)",
+			"name": "849302"
+		},
+		{
+			"id": "7",
+			"type": "hscode",
+			"direction": "Exported",
+			"size": 12,
+			"size_metric": "Companies trading (Imported or Exported)",
+			"name": "849302"
+		},
+		{
+			"id": "8",
+			"type": "hscode",
+			"direction": "Exported",
+			"size": 12,
+			"size_metric": "Companies trading (Imported or Exported)",
+			"name": "849302"
+		},
+		{
+			"id": "9",
+			"type": "hscode",
+			"direction": "Exported",
+			"size": 12,
+			"size_metric": "Companies trading (Imported or Exported)",
+			"name": "849302"
+		},
+		{
+			"id": "10",
+			"type": "hscode",
+			"direction": "Exported",
+			"size": 20,
+			"size_metric": "Companies trading (Imported or Exported)",
+			"name": "others"
+		},
+		{
+			"id": "11",
+			"type": "company",
+			"direction": "Imported",
+			"size": 12,
+			"size_metric": "HS code diversity",
+			"name": "DEF Ltd",
+			"postcode": "AB12 CDE"
+		},
+		{
+			"id": "12",
+			"type": "company",
+			"direction": "Imported",
+			"size": 12,
+			"size_metric": "HS code diversity",
+			"name": "DEF Ltd",
+			"postcode": "AB12 CDE"
+		},
+		{
+			"id": "13",
+			"type": "company",
+			"direction": "Imported",
+			"size": 12,
+			"size_metric": "HS code diversity",
+			"name": "DEF Ltd",
+			"postcode": "AB12 CDE"
+		},
+		{
+			"id": "14",
+			"type": "company",
+			"direction": "Imported",
+			"size": 12,
+			"size_metric": "HS code diversity",
+			"name": "DEF Ltd",
+			"postcode": "AB12 CDE"
+		},
+		{
+			"id": "15", 
+			"type": "company",
+			"direction": "Imported",
+			"size": 89,
+			"size_metric": "HS code diversity",
+			"name": "others"
+		},
+		{
+			"id": "16",
+			"type": "company",
+			"direction": "Exported",
+			"size": 12,
+			"size_metric": "HS code diversity",
+			"name": "DEF Ltd",
+			"postcode": "AB12 CDE"
+		},
+		{
+			"id": "17",
+			"type": "company",
+			"direction": "Exported",
+			"size": 12,
+			"size_metric": "HS code diversity",
+			"name": "DEF Ltd",
+			"postcode": "AB12 CDE"
+		},
+		{
+			"id": "18",
+			"type": "company",
+			"direction": "Exported",
+			"size": 12,
+			"size_metric": "HS code diversity",
+			"name": "DEF Ltd",
+			"postcode": "AB12 CDE"
+		},
+		{
+			"id": "19",
+			"type": "company",
+			"direction": "Exported",
+			"size": 12,
+			"size_metric": "HS code diversity",
+			"name": "DEF Ltd",
+			"postcode": "AB12 CDE"
+		},
+		{ "id": "20",
+			"type": "company",
+			"direction": "Exported",
+			"size": 89,
+			"size_metric": "HS code diversity",
+			"name": "others"
+		}
+	],
+	"links": [
+		{ "source": "0", "target": "1", "monthcount": 18 },
+		{ "source": "0", "target": "2", "monthcount": 18 },
+		{ "source": "0", "target": "3", "monthcount": 17 },
+		{ "source": "0", "target": "4", "monthcount": 16 },
+		{ "source": "0", "target": "5", "monthcount": 1 },
+		{ "source": "0", "target": "6", "monthcount": 18 },
+		{ "source": "0", "target": "7", "monthcount": 5 },
+		{ "source": "0", "target": "8", "monthcount": 4 },
+		{ "source": "0", "target": "9", "monthcount": 2 },
+		{ "source": "0", "target": "10", "monthcount": 1 },
+		{ "source": "1", "target": "19", "monthcount": 1 },
+		{ "source": "1", "target": "20", "monthcount": 18 },
+		{ "source": "8", "target": "15", "monthcount": 18 },
+		{ "source": "3", "target": "11", "monthcount": 18 },
+		{ "source": "7", "target": "13", "monthcount": 17 },
+		{ "source": "2", "target": "14", "monthcount": 17 },
+		{ "source": "2", "target": "15", "monthcount": 16 },
+		{ "source": "6", "target": "19", "monthcount": 16 },
+		{ "source": "8", "target": "19", "monthcount": 16 },
+		{ "source": "9", "target": "19", "monthcount": 16 },
+		{ "source": "4", "target": "15", "monthcount": 15 },
+		{ "source": "4", "target": "19", "monthcount": 15 }
+	]
+}
